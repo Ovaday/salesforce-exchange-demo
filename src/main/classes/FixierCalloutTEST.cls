@@ -40,4 +40,35 @@ private class FixierCalloutTEST {
 
         Assert.isTrue(isExceptionThrown, 'Exception should be thrown.');
     }
+
+    @IsTest
+    static void testGetSupportedSymbols_Success() {
+        Integer amountOfCurrencies = 4;
+        Test.setMock(HttpCalloutMock.class, RESTUtils.prepareMockCallout('Fixier_SymbolsMockResponse', 200));
+
+        Test.startTest();
+        Map<String, String> symbols = FixierCallout.getSupportedSymbols();
+        Test.stopTest();
+
+        Assert.isNotNull(symbols, 'Symbols should not be null.');
+        Assert.isTrue(symbols.size() > 0, 'Symbols should not be empty.');
+        Assert.areEqual(symbols.size(), amountOfCurrencies, 'Symbols should contain ' + amountOfCurrencies + ' currencies.');
+    }
+
+    @IsTest
+    static void testGetSupportedSymbols_Failure() {
+        Test.setMock(HttpCalloutMock.class, RESTUtils.prepareMockCallout('Fixier_SymbolsMockResponse', 500));
+
+        Test.startTest();
+        Boolean isExceptionThrown = true;
+        try {
+            FixierCallout.getSupportedSymbols();
+            isExceptionThrown = false;
+        } catch (CalloutException e) {
+            Assert.isTrue(e.getMessage().contains('Callout failed with status code: 500'), 'Callout failed with status code: 500');
+        }
+        Test.stopTest();
+
+        Assert.isTrue(isExceptionThrown, 'Exception should be thrown.');
+    }
 }

@@ -4,10 +4,34 @@
 
 public with sharing class FixierCallout {
 
+    public static Map<String, String> getSupportedSymbols() {
+        Http http = new Http();
+        HttpRequest request = new HttpRequest();
+        request.setMethod(Constants.GET_METHOD);
+        request.setHeader(Constants.CONTENT_TYPE_KEY, Constants.CONTENT_TYPE_APPLICATION_JSON);
+        request.setEndpoint('callout:Fixier_API_Symbols');
+        request.setTimeout(Constants.DEFAULT_GET_REQUEST_TIMEOUT);
+
+        HttpResponse response = http.send(request);
+
+        Integer statusCode = response.getStatusCode();
+
+        if (statusCode == 200) {
+            String responseBody = response.getBody();
+            Symbols_ResponseDTO responseDTO = (Symbols_ResponseDTO) JSON.deserialize(responseBody, Symbols_ResponseDTO.class);
+            if (!responseDTO.success) {
+                throw new CalloutException('Callout failed, fixier returned failure.');
+            }
+            return responseDTO.symbols;
+        } else {
+            throw new CalloutException('Callout failed with status code: ' + statusCode);
+        }
+    }
+
     public static Map<String, Map<String, String>> getLatestRates(String baseCurrency, List<String> targetCurrencies) {
         Http http = new Http();
         HttpRequest request = new HttpRequest();
-        request.setMethod(Constants.POST_METHOD);
+        request.setMethod(Constants.GET_METHOD);
         request.setHeader(Constants.CONTENT_TYPE_KEY, Constants.CONTENT_TYPE_APPLICATION_JSON);
         request.setEndpoint('callout:Fixier_API_Latest' + prepareLatestRatesRequestString(baseCurrency, targetCurrencies));
         request.setTimeout(Constants.DEFAULT_GET_REQUEST_TIMEOUT);
@@ -18,7 +42,7 @@ public with sharing class FixierCallout {
 
         if (statusCode == 200) {
             String responseBody = response.getBody();
-            ResponseDTO responseDTO = (ResponseDTO) JSON.deserialize(responseBody, ResponseDTO.class);
+            Latest_ResponseDTO responseDTO = (Latest_ResponseDTO) JSON.deserialize(responseBody, Latest_ResponseDTO.class);
             if (!responseDTO.success) {
                 throw new CalloutException('Callout failed, fixier returned failure.');
             }
@@ -41,11 +65,18 @@ public with sharing class FixierCallout {
         return '&base=' + baseCurrency + '&symbols=' + String.join(targetCurrencies, ',');
     }
 
-    private class ResponseDTO {
+    private abstract class Base_ResponseDTO {
         public Boolean success;
+    }
+
+    private class Latest_ResponseDTO extends Base_ResponseDTO{
         public Integer timestamp;
         public String base;
         public Map<String, String> rates;
+    }
+
+    private class Symbols_ResponseDTO extends Base_ResponseDTO {
+        public Map<String, String> symbols;
     }
 
 }
