@@ -11,7 +11,8 @@ private class FixierCalloutTEST {
         Test.setMock(HttpCalloutMock.class, RESTUtils.prepareMockCallout('Fixier_LatestMockResponse', 200));
 
         Test.startTest();
-        Map<String, Map<String, String>> rates = FixierCallout.getLatestRates('EUR', new List<String>{'USD', 'GBP'});
+        FixierCallout.Latest_ResponseDTO responseDTO = FixierCallout.getLatestRates('EUR', new List<String>{'USD', 'GBP'});
+        Map<String, Map<String, Decimal>> rates = responseDTO.exchangeRates();
         Test.stopTest();
 
         Assert.isNotNull(rates, 'Rates should not be null.');

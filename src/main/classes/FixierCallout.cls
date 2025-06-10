@@ -28,7 +28,7 @@ public with sharing class FixierCallout {
         }
     }
 
-    public static Map<String, Map<String, String>> getLatestRates(String baseCurrency, List<String> targetCurrencies) {
+    public static Latest_ResponseDTO getLatestRates(String baseCurrency, List<String> targetCurrencies) {
         Http http = new Http();
         HttpRequest request = new HttpRequest();
         request.setMethod(Constants.GET_METHOD);
@@ -46,9 +46,7 @@ public with sharing class FixierCallout {
             if (!responseDTO.success) {
                 throw new CalloutException('Callout failed, fixier returned failure.');
             }
-            Map<String, Map<String, String>> rates = new Map<String, Map<String, String>>();
-            rates.put(responseDTO.base, responseDTO.rates);
-            return rates;
+            return responseDTO;
         } else {
             throw new CalloutException('Callout failed with status code: ' + statusCode);
         }
@@ -69,13 +67,19 @@ public with sharing class FixierCallout {
         public Boolean success;
     }
 
-    private class Latest_ResponseDTO extends Base_ResponseDTO{
+    public class Latest_ResponseDTO extends Base_ResponseDTO{
         public Integer timestamp;
         public String base;
-        public Map<String, String> rates;
+        public Map<String, Decimal> rates;
+
+        public Map<String, Map<String, Decimal>> exchangeRates() {
+            Map<String, Map<String, Decimal>> exchangeRates = new Map<String, Map<String, Decimal>>();
+            exchangeRates.put(base, rates);
+            return exchangeRates;
+        }
     }
 
-    private class Symbols_ResponseDTO extends Base_ResponseDTO {
+    public class Symbols_ResponseDTO extends Base_ResponseDTO {
         public Map<String, String> symbols;
     }
 
