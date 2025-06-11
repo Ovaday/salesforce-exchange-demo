@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customSettingsType>Hierarchy</customSettingsType>
+    <description>Settings for Fixier integration</description>
+    <enableFeeds>false</enableFeeds>
+    <fields>
+        <fullName>API_Key__c</fullName>
+        <description>Fixier API Key</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Fixier API Key</inlineHelpText>
+        <label>API Key</label>
+        <length>255</length>
+        <required>true</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Base_Endpoint__c</fullName>
+        <defaultValue>&apos;https://data.fixer.io/api/&apos;</defaultValue>
+        <description>Base Endpoint URL (https://data.fixer.io/api/)</description>
+        <inlineHelpText>Base Endpoint URL (https://data.fixer.io/api/)</inlineHelpText>
+        <label>Base Endpoint</label>
+        <required>true</required>
+        <trackTrending>false</trackTrending>
+        <type>Url</type>
+    </fields>
+    <label>Fixier Settings</label>
+    <visibility>Public</visibility>
+</CustomObject>

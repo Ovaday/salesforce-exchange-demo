@@ -12,4 +12,16 @@ public class RESTUtils {
         return calloutMock;
     }
 
+    public static HttpResponse sendRequest(String requestMethod, String Endpoint) {
+        Http http = new Http();
+        HttpRequest request = new HttpRequest();
+        request.setMethod(requestMethod);
+        request.setHeader(Constants.CONTENT_TYPE_KEY, Constants.CONTENT_TYPE_APPLICATION_JSON);
+        request.setEndpoint(Endpoint);
+        request.setTimeout(Constants.DEFAULT_GET_REQUEST_TIMEOUT);
+
+        HttpResponse response = http.send(request);
+        return response;
+    }
+
 }
