@@ -9,5 +9,6 @@ How To configure:
 
 What can be improved:
 1) Add error handling (Fixier API can return that we have reached the limit of requests).
-2) Add caching.
-3) [Optional] Switch from Custom Settings to Custom Metadata.
+2) Additional tests on Fixier errors + error handling.
+3) Add caching.
+4) [Optional] Switch from Custom Settings to Custom Metadata.
