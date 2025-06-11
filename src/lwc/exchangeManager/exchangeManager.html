@@ -1,0 +1,75 @@
+<!--
+ - Created by eab on 04.06.2025.
+ -->
+
+<template>
+    <div class="slds-m-around_medium">
+        <lightning-card title="Currency Converter">
+            <div class="slds-p-around_medium">
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col">
+                        <lightning-combobox
+                            name="fromCurrency"
+                            label="From Currency"
+                            value={fromCurrency}
+                            placeholder="Select Currency"
+                            options={currencyOptions}
+                            onchange={handleFromCurrencyChange}
+                        ></lightning-combobox>
+                    </div>
+                    <div class="slds-col">
+                        <lightning-dual-listbox
+                            name="toCurrencies"
+                            label="To Currencies"
+                            source-label="Available"
+                            selected-label="Selected"
+                            field-level-help="Select one or more target currencies"
+                            options={currencyOptions}
+                            value={selectedCurrencies}
+                            onchange={handleCurrenciesChange}
+                            required
+                        ></lightning-dual-listbox>
+                    </div>
+                </div>
+                
+                <div class="slds-m-top_medium slds-align_absolute-center">
+                    <lightning-button
+                        label="Get Exchange Rate"
+                        variant="brand"
+                        onclick={fetchExchangeRate}
+                    ></lightning-button>
+                </div>
+
+                <div class="slds-m-top_medium">
+                    <template if:true={error}>
+                        <lightning-alert
+                            variant="error"
+                            message={error}
+                            class="slds-m-bottom_medium"
+                        ></lightning-alert>
+                    </template>
+                    <template if:true={isLoaded}>
+                        <ul class="slds-list_vertical slds-has-dividers_bottom-space">
+                            <template for:each={exchangeRateEntries} for:item="entry" for:key="entry.currencyCode">
+                                <li class="slds-item" key={entry.currencyCode}>
+                                    <div class="slds-grid slds-wrap slds-grid_align-spread">
+                                        <div class="slds-col slds-size_1-of-2">
+                                            <p class="slds-text-heading_small">{entry.currencyCode}</p>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-2">
+                                            <p class="slds-text-heading_small">{entry.rate}</p>
+                                        </div>
+                                    </div>
+                                </li>
+                            </template>
+                        </ul>
+
+                        <p class="slds-text-body_small slds-m-bottom_small">
+                            * Exchange rates shown are the amount of local currency for 1 {fromCurrency}
+                        </p>
+                    </template>
+                </div>
+            </div>
+        </lightning-card>
+    </div>
+</template>
