@@ -7,6 +7,13 @@ public with sharing class FixierCallout {
 
     private abstract class Base_ResponseDTO {
         public Boolean success;
+        public ErrorResponseDTO error;
+    }
+
+    public class ErrorResponseDTO extends Base_ResponseDTO {
+        public Integer code;
+        public String type;
+        public String info;
     }
 
     /*
@@ -88,6 +95,7 @@ public with sharing class FixierCallout {
 
         if (statusCode == 200) {
             String responseBody = response.getBody();
+            System.debug(responseBody);
             Latest_ResponseDTO responseDTO = (Latest_ResponseDTO) JSON.deserialize(responseBody, Latest_ResponseDTO.class);
             return responseDTO;
         } else {
