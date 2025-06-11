@@ -8,6 +8,16 @@ public with sharing class FixierCallout {
     private abstract class Base_ResponseDTO {
         public Boolean success;
         public ErrorResponseDTO error;
+
+        public void validate() {
+            if (!success && error != null) {
+                throw new AuraHandledException('Fixier:' + error.type + ': ' + error.info);
+            }
+
+            if (!success) {
+                throw new AuraHandledException('Failed to get exchange rates.');
+            }
+        }
     }
 
     public class ErrorResponseDTO extends Base_ResponseDTO {
@@ -38,7 +48,7 @@ public with sharing class FixierCallout {
         public Map<String, String> symbols;
     }
 
-    public static Map<String, String> getSupportedSymbols() {
+    public static Symbols_ResponseDTO getSupportedSymbols() {
 
         String endpoint = FIXIER_SETTINGS.Base_Endpoint__c + 'symbols?access_key=' + FIXIER_SETTINGS.API_Key__c;
 
@@ -48,7 +58,7 @@ public with sharing class FixierCallout {
         if (statusCode == 200) {
             String responseBody = response.getBody();
             Symbols_ResponseDTO responseDTO = (Symbols_ResponseDTO) JSON.deserialize(responseBody, Symbols_ResponseDTO.class);
-            return responseDTO.symbols;
+            return responseDTO;
         } else {
             throw new CalloutException('Callout failed with status code: ' + statusCode);
         }
@@ -95,7 +105,6 @@ public with sharing class FixierCallout {
 
         if (statusCode == 200) {
             String responseBody = response.getBody();
-            System.debug(responseBody);
             Latest_ResponseDTO responseDTO = (Latest_ResponseDTO) JSON.deserialize(responseBody, Latest_ResponseDTO.class);
             return responseDTO;
         } else {

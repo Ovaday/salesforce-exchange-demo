@@ -48,7 +48,7 @@ private class FixierCalloutTEST {
         Test.setMock(HttpCalloutMock.class, RESTUtils.prepareMockCallout('Fixier_SymbolsMockResponse', 200));
 
         Test.startTest();
-        Map<String, String> symbols = FixierCallout.getSupportedSymbols();
+        Map<String, String> symbols = FixierCallout.getSupportedSymbols().symbols;
         Test.stopTest();
 
         Assert.isNotNull(symbols, 'Symbols should not be null.');
